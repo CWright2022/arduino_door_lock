@@ -3,13 +3,12 @@ Code for Arduino hotel door model
 for RITSEC Imagine 2023 exhibition
 by Cayden Wright
 */
-#include <Wire.h>
-#include <PN532_I2C.h>
+#include <SPI.h>
+#include <PN532_SPI.h>
 #include <PN532.h>
 #include <NfcAdapter.h>
-
-PN532_I2C pn532_i2c(Wire);
-NfcAdapter nfc = NfcAdapter(pn532_i2c);
+PN532_SPI interface(SPI, 10); // create a PN532 SPI interface with the SPI CS terminal located at digital pin 10
+NfcAdapter nfc = NfcAdapter(interface); // create an NFC adapter object
 String tagId = "None";
 // byte nuidPICC[4];
 
