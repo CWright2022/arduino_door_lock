@@ -27,16 +27,16 @@ void loop() {
   digitalWrite(redLed, HIGH);
   digitalWrite(greenLed, LOW);
   readNFC();
-  delay(1000);
+  delay(500);
 }
 
 void readNFC() {
-  Serial.println("run nfc function");
+  // Serial.println("run nfc function");
   if (nfc.tagPresent()) {
-    Serial.println("tag is present");
+    // Serial.println("tag is present");
     NfcTag tag = nfc.read();
     if (tag.hasNdefMessage()) {
-      Serial.println("tag has NDEF record");
+      // Serial.println("tag has NDEF record");
       NdefMessage message = tag.getNdefMessage();
       int recordCount = message.getRecordCount();
       message.print();
@@ -52,7 +52,7 @@ void readNFC() {
         Serial.println(payloadString);
         payloadString.remove(0,3);
         Serial.println(payloadString);
-        if (payloadString == "unlock") {
+        if (payloadString == "unlockdoor") {
           Serial.println("unlock!");
           digitalWrite(redLed, LOW);
           digitalWrite(greenLed, HIGH);
