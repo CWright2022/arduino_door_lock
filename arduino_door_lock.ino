@@ -12,9 +12,10 @@ NfcAdapter nfc = NfcAdapter(interface);  // create an NFC adapter object
 String tagId = "None";
 // byte nuidPICC[4];
 
-int redLed = 6;
-int greenLed = 7;
-int buzzer = 5;
+int redLed = 5;
+int greenLed = 4;
+int readyLed = 3;
+int buzzer = 6;
 
 void doubleBeep(unsigned int freq) {
   tone(buzzer, freq);
@@ -30,18 +31,21 @@ void setup(void) {
   pinMode(redLed, OUTPUT);
   pinMode(greenLed, OUTPUT);
   pinMode(buzzer, OUTPUT);
+  pinMode(readyLed, OUTPUT);
   Serial.begin(9600);
   nfc.begin();
   tone(buzzer, 775);
   delay(500);
   noTone(buzzer);
   digitalWrite(buzzer, LOW);
+  digitalWrite(readyLed, HIGH);
 }
 
 void loop() {
   // Serial.println("run nfc function");
   if (nfc.tagPresent()) {
     // Serial.println("tag is present");
+    digitalWrite(readyLed, LOW);
     NfcTag tag = nfc.read();
     if (tag.hasNdefMessage()) {
       // Serial.println("tag has NDEF record");
@@ -49,6 +53,8 @@ void loop() {
       int recordCount = message.getRecordCount();
       message.print();
       for (int i = 0; i < recordCount; i++) {
+        // Serial.print("record number");
+        // Serial.println(i);
         NdefRecord record = message.getRecord(i);
         int payloadLength = record.getPayloadLength();
         byte payload[payloadLength];
@@ -57,9 +63,9 @@ void loop() {
         for (int c = 0; c < payloadLength; c++) {
           payloadString += (char)payload[c];
         }
-        Serial.println(payloadString);
+        // Serial.println(payloadString);
         payloadString.remove(0, 3);
-        Serial.println(payloadString);
+        // Serial.println(payloadString);
         if (payloadString == "unlockdoor") {
           Serial.println("unlock!");
           digitalWrite(greenLed, HIGH);
@@ -74,6 +80,7 @@ void loop() {
           digitalWrite(redLed, LOW);
         }
         payloadString = "";
+        digitalWrite(readyLed, HIGH);
       }
     }
   }
