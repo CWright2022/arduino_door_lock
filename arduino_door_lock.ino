@@ -47,42 +47,21 @@ void loop() {
     // Serial.println("tag is present");
     digitalWrite(readyLed, LOW);
     NfcTag tag = nfc.read();
-    if (tag.hasNdefMessage()) {
-      // Serial.println("tag has NDEF record");
-      NdefMessage message = tag.getNdefMessage();
-      int recordCount = message.getRecordCount();
-      message.print();
-      for (int i = 0; i < recordCount; i++) {
-        // Serial.print("record number");
-        // Serial.println(i);
-        NdefRecord record = message.getRecord(i);
-        int payloadLength = record.getPayloadLength();
-        byte payload[payloadLength];
-        record.getPayload(payload);
-        String payloadString = "";
-        for (int c = 0; c < payloadLength; c++) {
-          payloadString += (char)payload[c];
-        }
-        // Serial.println(payloadString);
-        payloadString.remove(0, 3);
-        // Serial.println(payloadString);
-        if (payloadString == "unlockdoor") {
-          Serial.println("unlock!");
-          digitalWrite(greenLed, HIGH);
-          doubleBeep(440);
-          delay(1775);
-          digitalWrite(greenLed, LOW);
-        } else {
-          Serial.println("incorrect");
-          digitalWrite(redLed, HIGH);
-          doubleBeep(131);
-          delay(1775);
-          digitalWrite(redLed, LOW);
-        }
-        payloadString = "";
-        digitalWrite(readyLed, HIGH);
-      }
+    Serial.println(tag.getUidString());
+    if(tag.getUidString()=="47 33 11 4E"){
+      Serial.println("unlock!");
+      digitalWrite(greenLed, HIGH);
+      doubleBeep(440);
+      delay(1775);
+      digitalWrite(greenLed, LOW);
     }
+    else{
+      Serial.println("incorrect");
+      digitalWrite(redLed, HIGH);
+      doubleBeep(131);
+      delay(1775);
+      digitalWrite(redLed, LOW);
+    }
+    digitalWrite(readyLed, HIGH);
   }
-  // delay(500);
 }
